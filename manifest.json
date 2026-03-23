@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Manga Chapter Tracker",
+  "version": "1.2.0",
+  "description": "Automatically tracks your manga reading progress. Saves the highest chapter you've read for each series and syncs across devices.",
+  "permissions": ["storage", "tabs"],
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "action": {
+    "default_title": "Manga Tracker",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "32": "icon32.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "service_worker.js"
+  }
+}

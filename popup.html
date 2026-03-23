@@ -1,0 +1,474 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            width: 400px;
+            max-height: 560px;
+            background: #0f0f13;
+            color: #e4e4e7;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo {
+            font-size: 18px;
+        }
+
+        .app-title {
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: -0.01em;
+        }
+
+        .status-pill {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.06);
+            color: #a1a1aa;
+            white-space: nowrap;
+        }
+
+        .status-pill.detected {
+            background: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+        }
+
+        /* Badge + Actions row */
+        .actions-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .badge-display {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 8px;
+            background: rgba(99, 102, 241, 0.12);
+            color: #a5b4fc;
+            white-space: nowrap;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 7px 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: default;
+        }
+
+        .btn-primary {
+            background: #6366f1;
+            color: #fff;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #5558e6;
+        }
+
+        .btn-ghost {
+            background: rgba(255, 255, 255, 0.06);
+            color: #a1a1aa;
+        }
+
+        .btn-ghost:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e4e4e7;
+        }
+
+        /* Search */
+        .search-bar {
+            padding: 8px 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            color: #e4e4e7;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.15s ease;
+        }
+
+        .search-input::placeholder {
+            color: #52525b;
+        }
+
+        .search-input:focus {
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+
+        /* Continue reading banner */
+        .continue-banner {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(34, 197, 94, 0.06);
+        }
+
+        .continue-banner.visible {
+            display: flex;
+        }
+
+        .continue-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .continue-label {
+            font-size: 11px;
+            color: #4ade80;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .continue-title {
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 1px;
+        }
+
+        .btn-continue {
+            flex-shrink: 0;
+            padding: 6px 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            background: #22c55e;
+            color: #fff;
+            transition: background 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn-continue:hover {
+            background: #16a34a;
+        }
+
+        /* Toolbar (search + sort) */
+        .toolbar {
+            display: flex;
+            gap: 6px;
+            padding: 8px 16px;
+            align-items: center;
+        }
+
+        .toolbar .search-input {
+            flex: 1;
+        }
+
+        .sort-btn {
+            flex-shrink: 0;
+            padding: 7px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            color: #a1a1aa;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.12s ease;
+            white-space: nowrap;
+        }
+
+        .sort-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #e4e4e7;
+        }
+
+        .sort-btn.active {
+            border-color: rgba(99, 102, 241, 0.4);
+            color: #a5b4fc;
+        }
+
+        /* Series list */
+        .list-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px 16px 12px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+        }
+
+        .list-container::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .list-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .list-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 32px 16px;
+            color: #52525b;
+            font-size: 13px;
+        }
+
+        .series-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            border-radius: 10px;
+            margin-top: 2px;
+            transition: background 0.12s ease;
+        }
+
+        .series-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .series-info {
+            flex: 1;
+            min-width: 0;
+            cursor: pointer;
+        }
+
+        .series-name {
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #e4e4e7;
+        }
+
+        .series-meta {
+            font-size: 11px;
+            color: #52525b;
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chapter-tag {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            color: #a1a1aa;
+            white-space: nowrap;
+        }
+
+        .del-btn {
+            width: 26px;
+            height: 26px;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            color: #52525b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            transition: all 0.12s ease;
+            flex-shrink: 0;
+        }
+
+        .del-btn:hover {
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+        }
+
+        /* Export/Import modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            background: #18181b;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 18px;
+            width: 360px;
+            max-height: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .modal-title {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .modal textarea {
+            width: 100%;
+            height: 160px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            color: #e4e4e7;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 11px;
+            padding: 10px;
+            resize: none;
+            outline: none;
+        }
+
+        .modal textarea:focus {
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .count-label {
+            font-size: 11px;
+            color: #52525b;
+            padding: 0 2px;
+        }
+
+        /* File input hidden */
+        #importFile {
+            display: none;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%) translateY(40px);
+            background: #27272a;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #e4e4e7;
+            font-size: 12px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            opacity: 0;
+            transition: all 0.25s ease;
+            z-index: 200;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="header-left">
+            <span class="logo">&#128214;</span>
+            <span class="app-title">Manga Tracker</span>
+        </div>
+        <span id="status" class="status-pill"></span>
+    </div>
+
+    <div class="actions-bar">
+        <div id="latestBadge" class="badge-display">--</div>
+        <button id="forceSaveBtn" class="btn btn-primary">Save chapter</button>
+        <button id="exportBtn" class="btn btn-ghost">Export</button>
+        <button id="importBtn" class="btn btn-ghost">Import</button>
+        <input type="file" id="importFile" accept=".json" />
+    </div>
+
+    <div id="continueBanner" class="continue-banner">
+        <div class="continue-info">
+            <div class="continue-label">Continue reading</div>
+            <div id="continueTitle" class="continue-title"></div>
+        </div>
+        <button id="continueBtn" class="btn-continue">Resume</button>
+    </div>
+
+    <div class="toolbar">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search series..." />
+        <button id="sortBtn" class="sort-btn" title="Change sort order">Recent</button>
+    </div>
+
+    <div class="list-container">
+        <div id="recent"></div>
+    </div>
+
+    <!-- Import modal -->
+    <div id="importModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-title">Import Bookmarks</div>
+            <textarea id="importTextarea" placeholder="Paste exported JSON here..."></textarea>
+            <div class="modal-actions">
+                <button class="btn btn-ghost" id="importCancel">Cancel</button>
+                <button class="btn btn-primary" id="importConfirm">Import</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>
